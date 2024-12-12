@@ -72,6 +72,10 @@ async function sendReminders() {
   // sendReminders().catch(console.error);
 
   // HTTP Endpoint to Trigger Reminders
+
+  app.get("/", (req, res) => {
+    res.status(200).send("Reminder Service is running!");
+  });
   app.get("/trigger-reminders", async (req, res) => {
     try {
       await sendReminders();
