@@ -39,8 +39,8 @@ async function sendReminders() {
       // Fetch all users
       console.log('test3');
 
-      // const snapshot = await usersRef.once("value");
-      // const users = snapshot.val();
+      const snapshot = await usersRef.once("value");
+      const users = snapshot.val();
 
       console.log('test4');
       console.log('users');
@@ -99,7 +99,7 @@ async function sendReminders() {
   app.get("/favicon.ico", (req, res) => {
     res.status(204).end(); // 204 = No Content
   });
-  
+
   app.get("/trigger-reminders", async (req, res) => {
     try {
       await sendReminders();
