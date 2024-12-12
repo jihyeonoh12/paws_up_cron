@@ -24,21 +24,40 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 async function sendReminders() {
+  console.log('test1');
+
     const db = admin.database();
     const usersRef = db.ref("users");
   
+    console.log('test2');
+    console.log('usersRef');
+    console.log(usersRef);
+
+
+
     try {
       // Fetch all users
+      console.log('test3');
+
       const snapshot = await usersRef.once("value");
       const users = snapshot.val();
+
+      console.log('test4');
+      console.log('users');
+      console.log(users);
+
   
       // Iterate through each user
       for (const userId in users) {
         const user = users[userId];
   
+        console.log('user');
+        console.log(user);
         // Check if the user is subscribed
         if (user.isSubscribed?.value) {
           const email = user.email;
+          console.log('email');
+          console.log(email);
   
           // Check vaccines and send reminders
           user.vaccines.value.forEach(async (vaccine) => {
@@ -78,8 +97,7 @@ async function sendReminders() {
   });
   app.get("/trigger-reminders", async (req, res) => {
     try {
-      // await sendReminders();
-      console.log('test');
+      await sendReminders();
       res.status(200).send("Reminders sent!");
     } catch (error) {
       console.error("Error sending reminders:", error);
