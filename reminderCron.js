@@ -43,7 +43,6 @@ async function sendReminders() {
           // Check vaccines and send reminders
           user.vaccines.value.forEach(async (vaccine) => {
             const { type, reminder } = vaccine;
-            const today = `Expired today`
   
             // Send reminder only if reminder is set and date is in the future
             if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
@@ -51,14 +50,14 @@ async function sendReminders() {
                 from: "no-reply@pawsup.com",
                 to: email,
                 subject: `Vaccine Reminder: ${type}`,
-                text: `Hello,\n\nThis is a reminder that ${user.name}'s vaccine (${type}) is expired today (${currentDate.toISOString().split('T')[0]}). Please schedule it promptly.\n\nBest regards,\nYour Vaccine Reminder Service`,
+                text: `Hello`,
               };
   
               try {
                 await transporter.sendMail(mailOptions);
-                console.log(`Reminder sent for ${type} and ${reminder} to ${email}`);
+                console.log(`Reminder sent`);
               } catch (error) {
-                console.error(`Failed to send reminder for ${type} to ${email}:`, error);
+                console.error(`Failed`, error);
               }
             }
           });
