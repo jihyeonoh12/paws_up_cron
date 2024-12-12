@@ -95,6 +95,11 @@ async function sendReminders() {
   app.get("/", (req, res) => {
     res.status(200).send("Reminder Service is running!");
   });
+
+  app.get("/favicon.ico", (req, res) => {
+    res.status(204).end(); // 204 = No Content
+  });
+  
   app.get("/trigger-reminders", async (req, res) => {
     try {
       await sendReminders();
