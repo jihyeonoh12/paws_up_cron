@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 // Initialize Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
-  databaseURL: "https://paws-up-a1046.firebaseapp.com/", 
+  databaseURL: "https://paws-up-a1046.web.app", 
 });
 
 // Nodemailer transporter
