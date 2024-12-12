@@ -1,3 +1,4 @@
+const express = require("express");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
 const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
@@ -17,6 +18,10 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS, 
   },
 });
+
+// Express Setup
+const app = express();
+const port = process.env.PORT || 3000;
 
 async function sendReminders() {
     const db = admin.database();
@@ -66,4 +71,20 @@ async function sendReminders() {
   }
   
   // Execute the function
-  sendReminders().catch(console.error);
+  // sendReminders().catch(console.error);
+
+  // HTTP Endpoint to Trigger Reminders
+  app.get("/trigger-reminders", async (req, res) => {
+    try {
+      await sendReminders();
+      res.status(200).send("Reminders sent!");
+    } catch (error) {
+      console.error("Error sending reminders:", error);
+      res.status(500).send("Failed to send reminders.");
+    }
+  });
+
+  // Start the Server
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
