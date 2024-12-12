@@ -1,9 +1,11 @@
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
+const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
+  credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://paws-up-a1046.web.app", 
 });
 
