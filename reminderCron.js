@@ -38,40 +38,42 @@ const port = process.env.PORT || 3000;
 // }
 
 async function sendReminders() {
-  const usersSnapshot = await db.collection("users").where("isSubscribed", "==", true).get();
+  const usersSnapshot = await db.collection("users").get();
+  return usersSnapshot;
+  // const usersSnapshot = await db.collection("users").where("isSubscribed", "==", true).get();
 
-  for (const doc of usersSnapshot.doc) {
-    const user = doc.data();
-    if (user.isSubscribed) {
-      for (const vaccine of user.vaccines) {
-        const { type, reminder } = vaccine;
+  // for (const doc of usersSnapshot.doc) {
+  //   const user = doc.data();
+  //   if (user.isSubscribed) {
+  //     for (const vaccine of user.vaccines) {
+  //       const { type, reminder } = vaccine;
 
-        if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
-          const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: process.env.EMAIL_USER,
-              pass: process.env.EMAIL_PASS,
-            },
-          });
+  //       if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
+  //         const transporter = nodemailer.createTransport({
+  //           service: "gmail",
+  //           auth: {
+  //             user: process.env.EMAIL_USER,
+  //             pass: process.env.EMAIL_PASS,
+  //           },
+  //         });
 
-          const mailOptions = {
-            from: 'no-reply@pawsup.com',
-            to: user.email,
-            subject: `Vaccine Reminder: ${type}`,
-            text: `Hello ${user.name},\n\nYour dog's ${type} vaccine is due.`,
-          };
+  //         const mailOptions = {
+  //           from: 'no-reply@pawsup.com',
+  //           to: user.email,
+  //           subject: `Vaccine Reminder: ${type}`,
+  //           text: `Hello ${user.name},\n\nYour dog's ${type} vaccine is due.`,
+  //         };
 
-          try {
-            await transporter.sendMail(mailOptions);
-            console.log(`Reminder sent for ${type} to ${user.email}`);
-          } catch (error) {
-            console.error(`Failed to send reminder for ${type}:`, error);
-          }
-        }
-      }
-    }
-  }
+  //         try {
+  //           await transporter.sendMail(mailOptions);
+  //           console.log(`Reminder sent for ${type} to ${user.email}`);
+  //         } catch (error) {
+  //           console.error(`Failed to send reminder for ${type}:`, error);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 
@@ -146,7 +148,7 @@ async function sendReminders() {
   app.get("/trigger-reminders", async (req, res) => {
     try {
       await sendReminders();
-      res.status(200).send("Reminders sent!");
+      res.status(200).send("Reminders sent! " + req);
     } catch (error) {
       console.error("Error sending reminders:", error);
       res.status(500).send("Failed to send reminders.");
