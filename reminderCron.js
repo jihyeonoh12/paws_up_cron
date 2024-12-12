@@ -78,7 +78,8 @@ async function sendReminders() {
   });
   app.get("/trigger-reminders", async (req, res) => {
     try {
-      await sendReminders();
+      // await sendReminders();
+      console.log('test');
       res.status(200).send("Reminders sent!");
     } catch (error) {
       console.error("Error sending reminders:", error);
