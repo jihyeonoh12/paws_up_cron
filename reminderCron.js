@@ -39,8 +39,8 @@ async function sendReminders() {
       // Fetch all users
       console.log('test3');
 
-      const snapshot = await usersRef.once("value");
-      const users = snapshot.val();
+      // const snapshot = await usersRef.once("value");
+      // const users = snapshot.val();
 
       console.log('test4');
       console.log('users');
@@ -48,40 +48,40 @@ async function sendReminders() {
 
   
       // Iterate through each user
-      for (const userId in users) {
-        const user = users[userId];
+      // for (const userId in users) {
+      //   const user = users[userId];
   
-        console.log('user');
-        console.log(user);
-        // Check if the user is subscribed
-        if (user.isSubscribed?.value) {
-          const email = user.email;
-          console.log('email');
-          console.log(email);
+      //   console.log('user');
+      //   console.log(user);
+      //   // Check if the user is subscribed
+      //   if (user.isSubscribed?.value) {
+      //     const email = user.email;
+      //     console.log('email');
+      //     console.log(email);
   
-          // Check vaccines and send reminders
-          user.vaccines.value.forEach(async (vaccine) => {
-            const { type, reminder } = vaccine;
+      //     // Check vaccines and send reminders
+      //     user.vaccines.value.forEach(async (vaccine) => {
+      //       const { type, reminder } = vaccine;
   
-            // Send reminder only if reminder is set and date is in the future
-            if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
-              const mailOptions = {
-                from: "no-reply@pawsup.com",
-                to: email,
-                subject: `Vaccine Reminder: ${type}`,
-                text: `Hello`,
-              };
+      //       // Send reminder only if reminder is set and date is in the future
+      //       if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
+      //         const mailOptions = {
+      //           from: "no-reply@pawsup.com",
+      //           to: email,
+      //           subject: `Vaccine Reminder: ${type}`,
+      //           text: `Hello`,
+      //         };
   
-              try {
-                await transporter.sendMail(mailOptions);
-                console.log(`Reminder sent`);
-              } catch (error) {
-                console.error(`Failed`, error);
-              }
-            }
-          });
-        }
-      }
+      //         try {
+      //           await transporter.sendMail(mailOptions);
+      //           console.log(`Reminder sent`);
+      //         } catch (error) {
+      //           console.error(`Failed`, error);
+      //         }
+      //       }
+      //     });
+      //   }
+      // }
     } catch (error) {
       console.error("Error fetching users or sending reminders:", error);
     }
