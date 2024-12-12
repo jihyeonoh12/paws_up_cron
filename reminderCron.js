@@ -14,8 +14,8 @@ const db = admin.firestore();
 
 
 // Express Setup
-// const app = express();
-// const port = process.env.PORT || 3000;
+const app = express();
+const port = process.env.PORT || 3000;
 
 // async function fetchUsers() {
 //   try {
