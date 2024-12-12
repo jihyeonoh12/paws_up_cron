@@ -43,16 +43,15 @@ async function sendReminders() {
           // Check vaccines and send reminders
           user.vaccines.value.forEach(async (vaccine) => {
             const { type, reminder } = vaccine;
-            const currentDate = new Date();
-            const today = `Expired. Due ${currentDate.toISOString().split('T')[0]}`
+            const today = `Expired today`
   
             // Send reminder only if reminder is set and date is in the future
-            if (reminder === today) {
+            if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
               const mailOptions = {
                 from: "no-reply@pawsup.com",
                 to: email,
                 subject: `Vaccine Reminder: ${type}`,
-                text: `Hello ${user.name.value},\n\nThis is a reminder that your dog's ${type} is expired today (${currentDate.toISOString().split('T')[0]}). Please schedule it promptly.\n\nBest regards,\nYour Vaccine Reminder Service`,
+                text: `Hello,\n\nThis is a reminder that ${user.name}'s vaccine (${type}) is expired today (${currentDate.toISOString().split('T')[0]}). Please schedule it promptly.\n\nBest regards,\nYour Vaccine Reminder Service`,
               };
   
               try {
