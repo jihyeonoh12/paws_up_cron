@@ -6,86 +6,129 @@ const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSO
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://paws-up-a1046.web.app", 
+  credential: admin.credential.cert(serviceAccount)
 });
 
-// Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, 
-  },
-});
+const db = admin.firestore();
+
+
 
 // Express Setup
-const app = express();
-const port = process.env.PORT || 3000;
+// const app = express();
+// const port = process.env.PORT || 3000;
+
+// async function fetchUsers() {
+//   try {
+//     const usersSnapshot = await db.collection("users").get(); // Fetch all documents in "users" collection
+//     if (usersSnapshot.empty) {
+//       console.log("No users found.");
+//       return [];
+//     }
+
+//     const users = [];
+//     usersSnapshot.forEach((doc) => {
+//       users.push({ id: doc.id, ...doc.data() }); // Add document ID and data to the array
+//     });
+
+//     return users;
+//   } catch (error) {
+//     console.error("Error fetching users:", error);
+//     throw error;
+//   }
+// }
 
 async function sendReminders() {
-  console.log('test1');
+  const usersSnapshot = await db.collection("users").where("isSubscribed", "==", true).get();
 
-    const db = admin.database();
-    const usersRef = db.ref("users");
-  
-    console.log('test2');
-    console.log('usersRef');
-    console.log(usersRef);
+  for (const doc of usersSnapshot.doc) {
+    const user = doc.data();
+    if (user.isSubscribed) {
+      for (const vaccine of user.vaccines) {
+        const { type, reminder } = vaccine;
 
+        if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
+          const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: process.env.EMAIL_USER,
+              pass: process.env.EMAIL_PASS,
+            },
+          });
 
+          const mailOptions = {
+            from: 'no-reply@pawsup.com',
+            to: user.email,
+            subject: `Vaccine Reminder: ${type}`,
+            text: `Hello ${user.name},\n\nYour dog's ${type} vaccine is due.`,
+          };
 
-    try {
-      // Fetch all users
-      console.log('test3');
-
-      const snapshot = await usersRef.once("value");
-      const users = snapshot.val();
-
-      console.log('test4');
-      console.log('users');
-      console.log(users);
-
-  
-      // Iterate through each user
-      // for (const userId in users) {
-      //   const user = users[userId];
-  
-      //   console.log('user');
-      //   console.log(user);
-      //   // Check if the user is subscribed
-      //   if (user.isSubscribed?.value) {
-      //     const email = user.email;
-      //     console.log('email');
-      //     console.log(email);
-  
-      //     // Check vaccines and send reminders
-      //     user.vaccines.value.forEach(async (vaccine) => {
-      //       const { type, reminder } = vaccine;
-  
-      //       // Send reminder only if reminder is set and date is in the future
-      //       if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
-      //         const mailOptions = {
-      //           from: "no-reply@pawsup.com",
-      //           to: email,
-      //           subject: `Vaccine Reminder: ${type}`,
-      //           text: `Hello`,
-      //         };
-  
-      //         try {
-      //           await transporter.sendMail(mailOptions);
-      //           console.log(`Reminder sent`);
-      //         } catch (error) {
-      //           console.error(`Failed`, error);
-      //         }
-      //       }
-      //     });
-      //   }
-      // }
-    } catch (error) {
-      console.error("Error fetching users or sending reminders:", error);
+          try {
+            await transporter.sendMail(mailOptions);
+            console.log(`Reminder sent for ${type} to ${user.email}`);
+          } catch (error) {
+            console.error(`Failed to send reminder for ${type}:`, error);
+          }
+        }
+      }
     }
   }
+}
+
+
+
+// async function sendReminders() {
+//     try {
+//       // Fetch all users
+//       console.log('test3');
+
+//       const usersSnapshot = await db.collection("users").get();
+//       // const snapshot = await usersRef.once("value");
+//       if (usersSnapshot.empty) {
+//         console.log("No data available at the 'users' reference.");
+//         return [];
+//       }
+//       const users = [];
+
+  
+//       // Iterate through each user
+//       // for (const userId in users) {
+//       //   const user = users[userId];
+  
+//       //   console.log('user');
+//       //   console.log(user);
+//       //   // Check if the user is subscribed
+//       //   if (user.isSubscribed?.value) {
+//       //     const email = user.email;
+//       //     console.log('email');
+//       //     console.log(email);
+  
+//       //     // Check vaccines and send reminders
+//       //     user.vaccines.value.forEach(async (vaccine) => {
+//       //       const { type, reminder } = vaccine;
+  
+//       //       // Send reminder only if reminder is set and date is in the future
+//       //       if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
+//       //         const mailOptions = {
+//       //           from: "no-reply@pawsup.com",
+//       //           to: email,
+//       //           subject: `Vaccine Reminder: ${type}`,
+//       //           text: `Hello`,
+//       //         };
+  
+//       //         try {
+//       //           await transporter.sendMail(mailOptions);
+//       //           console.log(`Reminder sent`);
+//       //         } catch (error) {
+//       //           console.error(`Failed`, error);
+//       //         }
+//       //       }
+//       //     });
+//       //   }
+//       // }
+//     } catch (error) {
+//       console.error("Error fetching users or sending reminders:", error);
+//     }
+//   }
   
   // Execute the function
   // sendReminders().catch(console.error);
