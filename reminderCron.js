@@ -22,25 +22,6 @@ const db = admin.firestore();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// async function fetchUsers() {
-//   try {
-//     const usersSnapshot = await db.collection("users").get(); // Fetch all documents in "users" collection
-//     if (usersSnapshot.empty) {
-//       console.log("No users found.");
-//       return [];
-//     }
-
-//     const users = [];
-//     usersSnapshot.forEach((doc) => {
-//       users.push({ id: doc.id, ...doc.data() }); // Add document ID and data to the array
-//     });
-
-//     return users;
-//   } catch (error) {
-//     console.error("Error fetching users:", error);
-//     throw error;
-//   }
-// }
 
 async function sendReminders() {
   const usersSnapshot = await db.collection("users").get();
@@ -54,8 +35,63 @@ async function sendReminders() {
       usersSnapshot.forEach((doc) => {
         users.push({ id: doc.id, ...doc.data() });
       });
+
+      for (const user of users) {
+        // const user = doc.data();
+        if (user.isSubscribed) {
+          let vaccinesDue = [];
+
+          user.vaccines.forEach((vaccine) => {
+            const { type, reminder } = vaccine;
+            if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
+              vaccinesDue.push(`${type}: ${reminder}`);
+            }
+          });
+   
+        if (vaccinesDue.length > 0) {
+          const emailBody = `
+          Hello,
+
+          Here are the upcoming vaccines due for ${user.name}:
+
+          ${vaccinesDue.join("\n")}
+
+          Please ensure timely vaccinations for your pet's health!
+
+          Best regards,
+          Paws-Up Team
+        `;
+          const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: process.env.EMAIL_USER,
+              pass: process.env.EMAIL_PASS,
+            },
+          });
+
+          const mailOptions = {
+            from: 'no-reply@pawsup.com',
+            to: user.email,
+            subject: `Vaccine Reminder for ${user.name}`,
+            text: emailBody,
+          };
+
+          try {
+            await transporter.sendMail(mailOptions);
+            console.log(`Reminder sent for to ${user.email}`);
+          } catch (error) {
+            console.error(`Failed to send reminder for ${user.name}:`, error);
+          }
+        }
+          
+        }
+      }
+
+
+
       return users;
-      // console.log("Users data:", JSON.stringify(users, null, 2));
+
+
     }
 
    
@@ -68,101 +104,10 @@ async function sendReminders() {
 
   // const usersSnapshot = await db.collection("users").where("isSubscribed", "==", true).get();
 
-  // for (const doc of usersSnapshot.doc) {
-  //   const user = doc.data();
-  //   if (user.isSubscribed) {
-  //     for (const vaccine of user.vaccines) {
-  //       const { type, reminder } = vaccine;
 
-  //       if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
-  //         const transporter = nodemailer.createTransport({
-  //           service: "gmail",
-  //           auth: {
-  //             user: process.env.EMAIL_USER,
-  //             pass: process.env.EMAIL_PASS,
-  //           },
-  //         });
-
-  //         const mailOptions = {
-  //           from: 'no-reply@pawsup.com',
-  //           to: user.email,
-  //           subject: `Vaccine Reminder: ${type}`,
-  //           text: `Hello ${user.name},\n\nYour dog's ${type} vaccine is due.`,
-  //         };
-
-  //         try {
-  //           await transporter.sendMail(mailOptions);
-  //           console.log(`Reminder sent for ${type} to ${user.email}`);
-  //         } catch (error) {
-  //           console.error(`Failed to send reminder for ${type}:`, error);
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 }
 
-
-
-// async function sendReminders() {
-//     try {
-//       // Fetch all users
-//       console.log('test3');
-
-//       const usersSnapshot = await db.collection("users").get();
-//       // const snapshot = await usersRef.once("value");
-//       if (usersSnapshot.empty) {
-//         console.log("No data available at the 'users' reference.");
-//         return [];
-//       }
-//       const users = [];
-
-  
-//       // Iterate through each user
-//       // for (const userId in users) {
-//       //   const user = users[userId];
-  
-//       //   console.log('user');
-//       //   console.log(user);
-//       //   // Check if the user is subscribed
-//       //   if (user.isSubscribed?.value) {
-//       //     const email = user.email;
-//       //     console.log('email');
-//       //     console.log(email);
-  
-//       //     // Check vaccines and send reminders
-//       //     user.vaccines.value.forEach(async (vaccine) => {
-//       //       const { type, reminder } = vaccine;
-  
-//       //       // Send reminder only if reminder is set and date is in the future
-//       //       if (reminder === 'Expired today' || reminder === 'Time for first vaccine!') {
-//       //         const mailOptions = {
-//       //           from: "no-reply@pawsup.com",
-//       //           to: email,
-//       //           subject: `Vaccine Reminder: ${type}`,
-//       //           text: `Hello`,
-//       //         };
-  
-//       //         try {
-//       //           await transporter.sendMail(mailOptions);
-//       //           console.log(`Reminder sent`);
-//       //         } catch (error) {
-//       //           console.error(`Failed`, error);
-//       //         }
-//       //       }
-//       //     });
-//       //   }
-//       // }
-//     } catch (error) {
-//       console.error("Error fetching users or sending reminders:", error);
-//     }
-//   }
-  
-  // Execute the function
-  // sendReminders().catch(console.error);
-
   // HTTP Endpoint to Trigger Reminders
-
   app.get("/", (req, res) => {
     res.status(200).send("Reminder Service is running!");
   });
