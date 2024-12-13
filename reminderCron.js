@@ -49,7 +49,7 @@ async function sendReminders() {
       users.push({ id: doc.id, ...doc.data() }); // Add document ID and data to the array
     });
 
-  return users;
+  return JSON.parse(users);
   // const usersSnapshot = await db.collection("users").where("isSubscribed", "==", true).get();
 
   // for (const doc of usersSnapshot.doc) {
