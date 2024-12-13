@@ -51,10 +51,12 @@ async function sendReminders() {
         if (vaccinesDue.length > 0) {
           const emailBody = `
           Hello,
-
+          </br>
           Here are the upcoming vaccines due for ${user.name}:
+          </br>
           ${vaccinesDue.join("\n")}
           Please ensure timely vaccinations for your pet's health!
+          </br>
           Best regards,
           Paws-Up Team
         `;
@@ -83,25 +85,7 @@ async function sendReminders() {
           
         }
       }
-
-
-
-      return users;
-
-
     }
-
-   
-
-
-    // usersSnapshot.forEach((doc) => {
-    //   users.push({ ...doc.data() }); // Add document ID and data to the array
-    // });
-
-
-  // const usersSnapshot = await db.collection("users").where("isSubscribed", "==", true).get();
-
-
 }
 
   // HTTP Endpoint to Trigger Reminders
