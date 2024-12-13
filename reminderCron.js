@@ -44,7 +44,7 @@ const port = process.env.PORT || 3000;
 
 async function sendReminders() {
   const usersSnapshot = await db.collection("users").get();
-  return JSON.parse(usersSnapshot);
+  return usersSnapshot;
 
     if (usersSnapshot.empty) {
       console.log("No users found.");
@@ -165,7 +165,7 @@ async function sendReminders() {
   app.get("/trigger-reminders", async (req, res) => {
     try {
       await sendReminders();
-      res.status(200).send("Reminders sent! " + req);
+      res.status(200).send("Reminders sent! " + JSON.parse(req));
     } catch (error) {
       console.error("Error sending reminders:", error);
       res.status(500).send("Failed to send reminders.");
