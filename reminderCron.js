@@ -43,12 +43,12 @@ const port = process.env.PORT || 3000;
 // }
 
 async function sendReminders() {
-  const usersSnapshot = await db.collection("users").get();
+  // const usersSnapshot = await db.collection("users").get();
 
-    if (usersSnapshot.empty) {
-      console.log("No users found.");
-      return [];
-    }
+  //   if (usersSnapshot.empty) {
+  //     console.log("No users found.");
+  //     return [];
+  //   }
 
     const users = [
       {
@@ -65,9 +65,9 @@ async function sendReminders() {
     ];
     return users;
 
-    usersSnapshot.forEach((doc) => {
-      users.push({ ...doc.data() }); // Add document ID and data to the array
-    });
+    // usersSnapshot.forEach((doc) => {
+    //   users.push({ ...doc.data() }); // Add document ID and data to the array
+    // });
 
 
   // const usersSnapshot = await db.collection("users").where("isSubscribed", "==", true).get();
