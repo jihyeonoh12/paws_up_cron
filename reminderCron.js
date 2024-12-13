@@ -63,8 +63,7 @@ async function sendReminders() {
         }
       }
     ];
-    console.log("Users data:", JSON.stringify(users, null, 2));
-    return JSON.stringify(users, null, 2);
+    return users;
 
     // usersSnapshot.forEach((doc) => {
     //   users.push({ ...doc.data() }); // Add document ID and data to the array
@@ -178,8 +177,9 @@ async function sendReminders() {
 
   app.get("/trigger-reminders", async (req, res) => {
     try {
-      await sendReminders();
-      res.status(200).send("Reminders sent! "  + req);
+      const test = await sendReminders();
+      console.log("Users data:", JSON.stringify(test, null, 2));
+      res.status(200).send(`Reminders sent! ${JSON.stringify(test, null, 2)}`);
     } catch (error) {
       console.error("Error sending reminders:", error);
       res.status(500).send("Failed to send reminders.");
