@@ -50,19 +50,7 @@ async function sendReminders() {
       return [];
     }
 
-    const users = [
-      {
-        name: { value: "Bibi" },
-        email: "user@example.com",
-        isSubscribed: { value: true },
-        vaccines: {
-          value: [
-            { type: "Rabies", date: "2024-12-03", reminder: "2024-12-01" },
-            { type: "Distemper", date: "2023-12-01", reminder: "2023-11-29" }
-          ]
-        }
-      }
-    ];
+   
     return usersSnapshot;
 
     // usersSnapshot.forEach((doc) => {
