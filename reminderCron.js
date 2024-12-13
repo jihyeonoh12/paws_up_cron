@@ -44,16 +44,29 @@ const port = process.env.PORT || 3000;
 
 async function sendReminders() {
   const usersSnapshot = await db.collection("users").get();
-  return usersSnapshot;
 
     if (usersSnapshot.empty) {
       console.log("No users found.");
       return [];
     }
 
-    const users = [];
+    const users = [
+      {
+        name: { value: "Bibi" },
+        email: "user@example.com",
+        isSubscribed: { value: true },
+        vaccines: {
+          value: [
+            { type: "Rabies", date: "2024-12-03", reminder: "2024-12-01" },
+            { type: "Distemper", date: "2023-12-01", reminder: "2023-11-29" }
+          ]
+        }
+      }
+    ];
+    return users;
+
     usersSnapshot.forEach((doc) => {
-      users.push({ id: doc.id, ...doc.data() }); // Add document ID and data to the array
+      users.push({ ...doc.data() }); // Add document ID and data to the array
     });
 
 
