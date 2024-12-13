@@ -53,11 +53,8 @@ async function sendReminders() {
           Hello,
 
           Here are the upcoming vaccines due for ${user.name}:
-
           ${vaccinesDue.join("\n")}
-
           Please ensure timely vaccinations for your pet's health!
-
           Best regards,
           Paws-Up Team
         `;
@@ -118,9 +115,7 @@ async function sendReminders() {
 
   app.get("/trigger-reminders", async (req, res) => {
     try {
-      const test = await sendReminders();
-      console.log("Users data:", JSON.stringify(test, null, 2));
-      res.status(200).send(`Reminders sent! ${JSON.stringify(test, null, 2)}`);
+      res.status(200).send(`Reminders sent!`);
     } catch (error) {
       console.error("Error sending reminders:", error);
       res.status(500).send("Failed to send reminders.");
