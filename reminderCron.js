@@ -63,7 +63,8 @@ async function sendReminders() {
         }
       }
     ];
-    return users;
+    console.log("Users data:", JSON.stringify(users, null, 2));
+    return JSON.stringify(users, null, 2);
 
     // usersSnapshot.forEach((doc) => {
     //   users.push({ ...doc.data() }); // Add document ID and data to the array
