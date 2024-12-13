@@ -1,8 +1,14 @@
 const express = require("express");
 const admin = require("firebase-admin");
 const nodemailer = require("nodemailer");
+require("dotenv").config();
+
 const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
 
+
+if (!process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+  throw new Error("GOOGLE_APPLICATION_CREDENTIALS_JSON is not set. Please set the environment variable.");
+}
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
@@ -39,6 +45,8 @@ const port = process.env.PORT || 3000;
 
 async function sendReminders() {
   const usersSnapshot = await db.collection("users").get();
+  return JSON.parse(usersSnapshot);
+
     if (usersSnapshot.empty) {
       console.log("No users found.");
       return [];
@@ -49,7 +57,7 @@ async function sendReminders() {
       users.push({ id: doc.id, ...doc.data() }); // Add document ID and data to the array
     });
 
-  return JSON.parse(users);
+
   // const usersSnapshot = await db.collection("users").where("isSubscribed", "==", true).get();
 
   // for (const doc of usersSnapshot.doc) {
