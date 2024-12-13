@@ -48,10 +48,18 @@ async function sendReminders() {
     if (usersSnapshot.empty) {
       console.log("No users found.");
       return [];
+    } else {
+      // Extract user data
+      const users = [];
+      usersSnapshot.forEach((doc) => {
+        users.push({ id: doc.id, ...doc.data() });
+      });
+      return users;
+      // console.log("Users data:", JSON.stringify(users, null, 2));
     }
 
    
-    return usersSnapshot;
+
 
     // usersSnapshot.forEach((doc) => {
     //   users.push({ ...doc.data() }); // Add document ID and data to the array
