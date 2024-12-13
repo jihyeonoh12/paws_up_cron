@@ -39,7 +39,17 @@ const port = process.env.PORT || 3000;
 
 async function sendReminders() {
   const usersSnapshot = await db.collection("users").get();
-  return usersSnapshot;
+    if (usersSnapshot.empty) {
+      console.log("No users found.");
+      return [];
+    }
+
+    const users = [];
+    usersSnapshot.forEach((doc) => {
+      users.push({ id: doc.id, ...doc.data() }); // Add document ID and data to the array
+    });
+
+  return users;
   // const usersSnapshot = await db.collection("users").where("isSubscribed", "==", true).get();
 
   // for (const doc of usersSnapshot.doc) {
