@@ -49,8 +49,14 @@ async function sendReminders() {
           });
    
         if (vaccinesDue.length > 0) {
-          const emailBody = `Hello,\nHere are the upcoming vaccines due for ${user.name}: \n${vaccinesDue.join("\n")}Please ensure timely vaccinations for your pet's health!\nBest regards,\nPaws Up Team
-        `;
+          const emailBody = `Hello,\n
+          
+          Here are the upcoming vaccines due for ${user.name}: \n
+          ${vaccinesDue.join("\n")}
+          Please ensure timely vaccinations for your pet's health!\n
+
+          Best regards,\n
+          Paws Up Team`;
           const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
